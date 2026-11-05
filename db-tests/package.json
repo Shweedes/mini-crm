@@ -1,0 +1,12 @@
+{
+  "name": "mini-crm-db-tests",
+  "private": true,
+  "type": "module",
+  "description": "Проверка миграций и RLS на локальном Postgres (PGlite), без облака",
+  "scripts": {
+    "test": "node --test rls.test.mjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.3.0"
+  }
+}
