@@ -1,0 +1,47 @@
+# Сборка и публикация сайта на GitHub Pages при каждом пуше в main.
+# Включить один раз: Settings → Pages → Build and deployment → Source: GitHub Actions.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+        env:
+          # Публичные значения: адрес проекта и publishable key попадают в браузер в любом случае.
+          # Секретных ключей (service_role, sb_secret_…) здесь и в репозитории нет.
+          VITE_SUPABASE_URL: https://zbdyfysfmcoqzblxyesg.supabase.co
+          VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_xU4CSvbNomIhEAyLv3Ba-w_vwmtxt9Y
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

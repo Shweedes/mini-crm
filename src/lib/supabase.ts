@@ -6,4 +6,6 @@ import { createClient } from '@supabase/supabase-js';
 export const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+  // Вход только по паролю, без ссылок-приглашений и OAuth: разбирать адрес страницы не нужно.
+  { auth: { detectSessionInUrl: false } },
 );

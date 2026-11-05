@@ -1,5 +1,5 @@
 import { Alert } from '@mantine/core';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { RequireAuth } from './components/Layout';
 import { AuthProvider, useProfile } from './lib/auth';
 import { LoginPage } from './pages/LoginPage';
@@ -21,9 +21,11 @@ function OnlyFor({ role, children }: { role: Role; children: React.ReactNode }) 
   return profile.role === role ? <>{children}</> : <Navigate to="/" replace />;
 }
 
+// HashRouter: адреса вида /#/tasks/…; так прямые ссылки и обновление страницы работают
+// на любом статическом хостинге (в том числе GitHub Pages) без настроек сервера.
 export function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
@@ -51,6 +53,6 @@ export function App() {
           </Route>
         </Routes>
       </AuthProvider>
-    </BrowserRouter>
+    </HashRouter>
   );
 }

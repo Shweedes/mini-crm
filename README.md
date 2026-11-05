@@ -2,7 +2,7 @@
 
 Небольшая CRM для строительной компании: постановщик ставит задачи по объектам (стройкам), исполнители берут их в работу и отправляют на проверку, каждая смена статуса сохраняется в историю.
 
-**Стек:** React 19 + TypeScript + Vite, Mantine (UI), React Router, Supabase (Postgres + Auth), деплой на Vercel.
+**Стек:** React 19 + TypeScript + Vite, Mantine (UI), React Router, Supabase (Postgres + Auth), деплой на GitHub Pages.
 
 **Ключевая идея:** все правила доступа и переходов статусов живут в базе (RLS-политики, права на колонки, функция `change_task_status`), а не в интерфейсе. Интерфейс только показывает то, что база разрешает. Подробнее: [объяснение для руководителя](docs/explanation-for-manager.md) и [решения и допущения](docs/decisions-and-assumptions.md).
 
@@ -27,9 +27,11 @@ npm run dev                  # http://localhost:5173
 
 Во фронтенд попадают **только** `VITE_SUPABASE_URL` и публичный `VITE_SUPABASE_PUBLISHABLE_KEY`. Секретный ключ (`sb_secret_…` / `service_role`) нигде не используется.
 
-### 3. Деплой (Vercel)
+### 3. Деплой (GitHub Pages)
 
-Импортируйте репозиторий в Vercel (preset *Vite* определяется сам), добавьте две переменные окружения `VITE_SUPABASE_URL` и `VITE_SUPABASE_PUBLISHABLE_KEY` и задеплойте. Файл `vercel.json` перенаправляет все пути на `index.html`, поэтому прямые ссылки вида `/tasks/…` работают.
+Сайт собирается и публикуется автоматически при каждом пуше в `main` (workflow `.github/workflows/deploy.yml`). Один раз включите: репозиторий → **Settings → Pages → Build and deployment → Source: GitHub Actions**. После пуша ход сборки виден на вкладке **Actions**, а сайт будет доступен по адресу `https://<логин>.github.io/<репозиторий>/`.
+
+Публичные `VITE_SUPABASE_URL` и `VITE_SUPABASE_PUBLISHABLE_KEY` заданы в workflow, для другого проекта Supabase замените их там. Маршрутизация сделана через `HashRouter` (адреса вида `/#/tasks/…`), поэтому прямые ссылки и обновление страницы работают на любом статическом хостинге (Netlify, Vercel, Cloudflare Pages) без настроек сервера.
 
 Бесплатный проект Supabase засыпает через 7 дней без активности. Если приложение не отвечает, нажмите *Restore project* в панели Supabase.
 
